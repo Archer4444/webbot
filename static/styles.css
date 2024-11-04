@@ -1,0 +1,77 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #2C2F33; /* Темный фон */
+    color: #FFFFFF;
+}
+
+.chat-container {
+    width: 400px;
+    max-width: 100%;
+    margin: 50px auto;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    background-color: #23272A; /* Цвет контейнера */
+}
+
+.chat-header {
+    background-color: #7289DA; /* Цвет заголовка */
+    padding: 15px;
+    text-align: center;
+}
+
+.chat-area {
+    padding: 10px;
+    height: 300px;
+    overflow-y: auto;
+}
+
+.input-area {
+    display: flex;
+    padding: 10px;
+    background-color: #2C2F33; /* Цвет области ввода */
+}
+
+#user-input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #23272A; /* Цвет поля ввода */
+    color: white;
+}
+
+#send-button {
+    background-color: #7289DA; /* Цвет кнопки отправки */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+#send-button:hover {
+    background-color: #5B6E94; /* Цвет кнопки при наведении */
+}
+
+.message {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 70%;
+    clear: both;
+}
+
+.user-message {
+    background-color: #7289DA; /* Цвет сообщения пользователя */
+    color: white;
+    align-self: flex-end; /* Выравнивание сообщений пользователя */
+}
+
+.bot-message {
+    background-color: #3D3F42; /* Цвет сообщения бота */
+    color: white;
+    align-self: flex-start; /* Выравнивание сообщений бота */
+}

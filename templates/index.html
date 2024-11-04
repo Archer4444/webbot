@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чат-бот</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #2C2F33; /* Темный фон */
+            color: #FFFFFF;
+        }
+
+        .chat-container {
+            width: 400px;
+            max-width: 100%;
+            margin: 50px auto;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            background-color: #23272A; /* Цвет контейнера */
+        }
+
+        .chat-header {
+            background-color: #7289DA; /* Цвет заголовка */
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #5B6E94;
+        }
+
+        .chat-area {
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+        }
+
+        .input-area {
+            display: flex;
+            padding: 10px;
+            background-color: #2C2F33; /* Цвет области ввода */
+            border-top: 1px solid #5B6E94;
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #23272A; /* Цвет поля ввода */
+            color: white;
+            font-size: 14px;
+        }
+
+        #send-button {
+            background-color: #7289DA; /* Цвет кнопки отправки */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            margin-left: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        #send-button:hover {
+            background-color: #5B6E94; /* Цвет кнопки при наведении */
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 70%;
+            clear: both;
+            overflow-wrap: break-word; /* Для переноса длинных слов */
+            position: relative; /* Для псевдоэлементов */
+        }
+
+        .user-message {
+            background-color: #7289DA; /* Цвет сообщения пользователя */
+            color: white;
+            align-self: flex-end; /* Выравнивание сообщений пользователя */
+            margin-left: auto; /* Правое выравнивание */
+        }
+
+        .bot-message {
+            background-color: #3D3F42; /* Цвет сообщения бота */
+            color: white;
+            align-self: flex-start; /* Выравнивание сообщений бота */
+            margin-right: auto; /* Левое выравнивание */
+        }
+
+        /* Стиль для выделения кода */
+        pre {
+            background-color: #2A2D32; /* Цвет фона для выделенного текста */
+            padding: 5px;
+            border-radius: 5px;
+            overflow: auto; /* Прокрутка для длинного текста */
+            white-space: pre-wrap; /* Перенос длинных строк */
+            color: #F8F8F2; /* Цвет текста */
+            font-family: 'Courier New', Courier, monospace; /* Моноширинный шрифт */
+            margin: 0; /* Убираем отступы */
+            font-size: 14px; /* Размер шрифта */
+        }
+
+        .message:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 10px;
+            right: 10px;
+            height: 4px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>Чат с ботом</h2>
+        </div>
+        <div id="chat-area" class="chat-area"></div>
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Введите сообщение..." autofocus>
+            <button id="send-button">Отправить</button>
+        </div>
+    </div>
+    <script>
+        document.getElementById("send-button").addEventListener("click", sendMessage);
+        document.getElementById("user-input").addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const input = document.getElementById("user-input");
+            const userMessage = input.value.trim();
+            if (userMessage) {
+                appendMessage(userMessage, "user-message");
+                input.value = "";
+
+                // Отправка сообщения на сервер
+                fetch("/ask", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ message: userMessage })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    appendMessage(formatBotMessage(data.reply), "bot-message");
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    appendMessage("Ошибка получения ответа.", "bot-message");
+                });
+            }
+        }
+
+        function appendMessage(message, messageType) {
+            const chatArea = document.getElementById("chat-area");
+            const messageElement = document.createElement("div");
+            messageElement.className = `message ${messageType}`;
+            messageElement.innerHTML = message; // Добавляем сообщение
+            chatArea.appendChild(messageElement);
+            chatArea.scrollTop = chatArea.scrollHeight; // Прокрутка вниз
+        }
+
+        // Функция для форматирования сообщения бота
+        function formatBotMessage(message) {
+            return message.replace(/`([^`]+)`/g, '<pre>$1</pre>'); // Замена `код` на выделение
+        }
+    </script>
+</body>
+</html>
